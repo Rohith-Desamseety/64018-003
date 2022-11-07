@@ -1,0 +1,68 @@
+---
+title: "Assignment 5"
+author: "Rohith Desamseety"
+date: "2022-11-06"
+output: pdf_document
+---
+The Research and Development Division of the Emax Corporation has developed three new products. A
+decision now needs to be made on which mix of these products should be produced. Management wants
+primary consideration given to three factors:
+1. Total Profit,
+2. Stability in the workforce and
+3. Achieving an increase in the company’s earnings next year from the $75 million achieved
+this year.
+
+***Objective Function***
+\newline
+Maximize Z = P - 6C - 3D, where
+\newline
+P = Total discounted profit over the life of the new products,
+\newline
+C = Change in either direction towards the current level of employment,
+\newline
+D = decrease if any in next year’s earnings from the current year’s level.
+
+```{r}
+library(lpSolve)
+library(lpSolveAPI)
+```
+
+Loading the LP file from the current directory and printing the model
+\newline
+Defining y1p and y1m as the amount over (if any) and the amount under (if any) 
+the employment level goal.
+\newline
+Defining y2p and y2m in the same way for the goal regarding earnings next year.
+\newline
+Define x1, x2 and x3 as the production rates of Products 1, 2, and 3, respectively.
+\newline
+Also expressing P in terms of x1, x2 and x3 and the objective function in terms 
+of x1, x2, x3, y1p, y1m , y2p and y2m
+
+
+```{r}
+getwd()
+setwd("/users/rohith/downloads")
+rd_max <- read.lp("Max.lp")
+rd_max
+emax_table <- matrix(c("Total Profit", "Employment Level", "Earnings Next Year",
+20,6,8,
+15,4,7,
+25,5,5,
+"Maximize","=50",">=75", "Millions of Dollars", "Hundreds of Employees", "Millions of Dollars"), ncol=6)
+colnames(emax_table) <- c("Factor","Product 1", "Product 2", "Product 3", "Goal", "Units")
+as.table(emax_table)
+solve(rd_max)
+get.objective(rd_max)
+get.variables(rd_max)
+```
+
+***Interpretation:***
+
+1. The units of combination that the company must use in order to optimize the goal function are X1, X2, and X3. 20 units of Product 1 and 15 units of Product 2 cannot be manufactured since the resultant solution was "0," according to the codes X1 for Product 1, X2 for Product 2, and X3 for Product 3. But X3 has undergone a transformation, namely. The only product that the company can create, 15 units of Product 3, is the one that will maximize profit.
+
+2. The intention was to stabilize employment levels with a cap of 50 hundred workers as the maximum, but in this case, the business employed more than that by 25 hundred employees (y1p), demanding the payment of a penalty for the rise in the employee count.
+
+3. The objective of y2p and y2m was to measure the rise or fall in the earnings for the following year relative to the present level, which in this case is "0," indicating that there will be no change in the profits for the following year compared to those for the current year. As a result, the earnings for the next year are unchanged.
+
+4. The objective function value, in this case 225 million dollars, calls out the profit that the company is maximizing.
